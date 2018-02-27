@@ -1,3 +1,4 @@
+// renamed to Album.js from album.js, git keeps dropping name change
 import React, { Component } from 'react';
 
 class Album extends Component {
