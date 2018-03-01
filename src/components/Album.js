@@ -16,10 +16,12 @@ class Album extends Component {
       isPlaying: false,
       currentTime: 0,
       duration: album.songs[0].duration,
+      currentVolume: 0.8
     };
 
     this.audioElement = document.createElement('audio');
     this.audioElement.src = album.songs[0].audioSrc;
+    this.audioElement.volume = 0.8;
   }
 
   componentDidMount() {
@@ -88,6 +90,20 @@ class Album extends Component {
     this.setState({ currentTime: newTime });
   }
 
+  handleVolumeChange(e) {
+    const newVolume = e.target.value;
+    this.audioElement.volume = newVolume;
+    this.setState({currentVolume: newVolume});
+  }
+
+  formatTime(seconds) {
+    if (isNaN(seconds)) return "-:--";
+     
+    let date = new Date(null);
+    date.setSeconds(seconds);
+    return date.toISOString().substr(14, 5);
+  }
+
   render() {
     return (
       <section className="album">
@@ -119,7 +135,7 @@ class Album extends Component {
                     </button>
                   </td>
                   <td className="song-title">{song.title}</td>
-                  <td className="song-duration">{song.duration}</td>
+                  <td className="song-duration">{this.formatTime(song.duration)}</td>
                 </tr>
               )
             }
@@ -135,6 +151,8 @@ class Album extends Component {
           handlePrevClick={() => this.handlePrevClick()}
           handleNextClick={() => this.handleNextClick()}
           handleTimeChange={(e) => this.handleTimeChange(e)}
+          handleVolumeChange={(e) => this.handleVolumeChange(e)}
+          formatTime={(seconds) => this.formatTime(seconds)}
         />
       </section>
     )
