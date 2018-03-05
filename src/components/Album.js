@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import albumData from './../data/albums';
 import PlayerBar from './PlayerBar';
+import SongTrackButton from './SongTrackButton';
 
 class Album extends Component {
   constructor(props) {
@@ -14,9 +15,11 @@ class Album extends Component {
       album: album,
       currentSong: album.songs[0],
       isPlaying: false,
+      isPaused: false,
       currentTime: 0,
       duration: album.songs[0].duration,
-      currentVolume: 0.8
+      currentVolume: 0.8,
+      hover: false
     };
 
     this.audioElement = document.createElement('audio');
@@ -45,12 +48,12 @@ class Album extends Component {
 
   play() {
     this.audioElement.play();
-    this.setState({ isPlaying: true });
+    this.setState({ isPlaying: true, isPaused: false });
   }
 
   pause() {
     this.audioElement.pause();
-    this.setState({ isPlaying: false });
+    this.setState({ isPlaying: false, isPaused: true });
   }
 
   setSong(song) {
@@ -104,6 +107,14 @@ class Album extends Component {
     return date.toISOString().substr(14, 5);
   }
 
+  onMouseEnter() {
+    this.setState({ hover: true });
+  }
+
+  onMouseLeave() {
+    this.setState({ hover: false });
+  }
+
   render() {
     return (
       <section className="album">
@@ -130,13 +141,17 @@ class Album extends Component {
                 <tbody>
                   {
                     this.state.album.songs.map( (song, index) =>
-                      <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
+                      <tr className="song"
+                          key={index}
+                          onClick={() => this.handleSongClick(song)} >
                         <td className="song-actions">
-                          <button>
-                            <span className="song-number">{index+1}</span>
-                            <span className="ion-play"></span>
-                            <span className="ion-pause"></span>
-                          </button>
+                          <SongTrackButton
+                            index={index}
+                            song={song}
+                            currentSong={this.state.currentSong}
+                            isPlaying={this.state.isPlaying}
+                            isPaused={this.state.isPaused}
+                          />
                         </td>
                         <td className="song-title">{song.title}</td>
                         <td className="song-duration ">{this.formatTime(song.duration)}</td>
